@@ -13,7 +13,7 @@ namespace TCCAssociation.Associations
         Task<AssociationDto> GetAssociation(string id);
         //Task<AssociationDto> GetAssociationbyName(string name, string language_code);
         Task<string> CreateAssociation(AssociationDto input);
-        //Task<AssociationDto> UpdateAssociation(AssociationDto input);
+        Task<AssociationDto> UpdateAssociation(AssociationDto input);
         Task<string> DeleteAssociation(string id);
     }
 }
