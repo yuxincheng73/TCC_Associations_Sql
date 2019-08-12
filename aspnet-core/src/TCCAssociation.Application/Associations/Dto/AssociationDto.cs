@@ -1,15 +1,18 @@
-﻿using Abp.AutoMapper;
+﻿using Abp.Application.Services.Dto;
+using Abp.AutoMapper;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using TCCAssociation.Models;
 
 namespace TCCAssociation.Associations.Dto
 {
     [AutoMap(typeof(Association))]
-    public class AssociationDto
+    public class AssociationDto : EntityDto
     {
-        public string Id { get; set; }
+        //public string Id { get; set; }
         public string Name { get; set; }
         public string Name_TC { get; set; }
         public string Name_SC { get; set; }
@@ -20,7 +23,9 @@ namespace TCCAssociation.Associations.Dto
         public string Url_TC { get; set; }
         public string Url_SC { get; set; }
         public string Logo { get; set; }
+        [JsonProperty("launch_date")]
         public DateTime LaunchDate { get; set; }
+        [JsonProperty("time_zone")]
         public string TimeZone { get; set; }
     }
 }

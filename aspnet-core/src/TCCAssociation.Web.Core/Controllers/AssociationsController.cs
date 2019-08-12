@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 using Microsoft.AspNetCore.Mvc;
 using TCCAssociation.Associations;
 using TCCAssociation.Associations.Dto;
@@ -31,7 +32,7 @@ namespace TCCAssociation.Controllers
 
         [HttpGet]
         [Route("association/{id}")]
-        public async Task<IActionResult> GetAssociation(string id)
+        public async Task<IActionResult> GetAssociation(int id)
         {
             var association = await _associationsService.GetAssociation(id);
             if(association == null)
@@ -50,7 +51,7 @@ namespace TCCAssociation.Controllers
                 return BadRequest();
             }
             var association = await _associationsService.CreateAssociation(input);
-            if(association == "Invalid Creation of Association")
+            if(association == -1)
             {
                 return BadRequest();
             }
@@ -75,10 +76,10 @@ namespace TCCAssociation.Controllers
 
         [HttpDelete]
         [Route("association")]
-        public async Task<IActionResult> DeleteAssociation(string id)
+        public async Task<IActionResult> DeleteAssociation(EntityDto id)
         {
             var association = await _associationsService.DeleteAssociation(id);
-            if(association == "Deletion Failed")
+            if(association == -1)
             {
                 return BadRequest();
             }

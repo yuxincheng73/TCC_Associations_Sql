@@ -5,50 +5,51 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace TCCAssociation.Models
 {
-    public class Association : IHasCreationTime, IHasDeletionTime
+    public class Association : Entity, IHasCreationTime, IHasDeletionTime
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-        [BsonElement("Name")]
+        //[BsonId]
+        //[BsonRepresentation(BsonType.ObjectId)]
+        //public string Id { get; set; }
+        [Column("name")]
         public string Name { get; set; }
-        [BsonElement("Name_TC")]
+        [Column("name_tc")]
         public string Name_TC { get; set; }
-        [BsonElement("Name_SC")]
+        [Column("name_sc")]
         public string Name_SC { get; set; }
-        [BsonElement("Description")]
+        [Column("description")]
         public string Description { get; set; }
-        [BsonElement("Description_TC")]
+        [Column("description_tc")]
         public string Description_TC { get; set; }
-        [BsonElement("Description_SC")]
+        [Column("description_sc")]
         public string Description_SC { get; set; }
-        [BsonElement("Url")]
+        [Column("url")]
         public string Url { get; set; }
-        [BsonElement("Url_TC")]
+        [Column("url_tc")]
         public string Url_TC { get; set; }
-        [BsonElement("Url_SC")]
+        [Column("url_sc")]
         public string Url_SC { get; set; }
-        [BsonElement("Logo")]
+        [Column("logo")]
         public string Logo { get; set; }
-        [BsonElement("Discoverable")]
+        [Column("discoverable")]
         public bool Discoverable { get; set; }
-        [BsonElement("SortingOder")]
-        public string SortingOrder { get; set; }
-        [BsonElement("LaunchDate")]
+        [Column("sorting_order")]
+        public int SortingOrder { get; set; }
+        [Column("launch_date")]
         public DateTime LaunchDate { get; set; }
-        [BsonElement("TimeZone")]
+        [Column("time_zone")]
         public string TimeZone { get; set; }
-        [BsonElement("CreationTime")]
+        [Column("created_at")]
         public DateTime CreationTime { get; set; }
-        [BsonElement("UpdationTime")]
+        [Column("updated_at")]
         public DateTime UpdationTime { get; set; }
-        [BsonElement("DeletionTime")]
+        [Column("deleted_at")]
         public DateTime? DeletionTime { get; set; }
-        [BsonElement("IsDeleted")]
+        [Column("is_deleted")]
         public bool IsDeleted { get; set; }
 
         public Association()

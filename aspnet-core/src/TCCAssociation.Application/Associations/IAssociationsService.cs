@@ -1,4 +1,5 @@
 ﻿using Abp.Application.Services;
+using Abp.Application.Services.Dto;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,10 +11,10 @@ namespace TCCAssociation.Associations
     public interface IAssociationsService : IApplicationService
     {
         Task<List<AssociationDto>> GetAssociations();
-        Task<AssociationDto> GetAssociation(string id);
+        Task<AssociationDto> GetAssociation(int id);
         //Task<AssociationDto> GetAssociationbyName(string name, string language_code);
-        Task<string> CreateAssociation(AssociationDto input);
+        Task<int> CreateAssociation(AssociationDto input);
         Task<AssociationDto> UpdateAssociation(AssociationDto input);
-        Task<string> DeleteAssociation(string id);
+        Task<int> DeleteAssociation(EntityDto id);
     }
 }

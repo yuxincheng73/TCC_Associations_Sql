@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
+using Abp.Domain.Repositories;
 using AutoMapper;
 using MongoDB.Driver;
 using TCCAssociation.Associations.Dto;
@@ -9,67 +11,66 @@ using TCCAssociation.Models;
 
 namespace TCCAssociation.Associations
 {
-    class AssociationsService : TCCAssociationAppServiceBase, IAssociationsService
+    public class AssociationsService : TCCAssociationAppServiceBase, IAssociationsService
     {
-        private readonly IMongoCollection<Association> _associationRepository;
+        private readonly IRepository<Association> _associationRepository;
 
-        public AssociationsService(IAssociationsDatabaseSettings settings)
+        public AssociationsService(IRepository<Association> associationRepository)
         {
-            var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);
-            _associationRepository = database.GetCollection<Association>(settings.BrandsCollectionName);
+            _associationRepository = associationRepository;
         }
 
-        public async Task<string> CreateAssociation(AssociationDto input)
+        public async Task<int> CreateAssociation(AssociationDto input)
         {
             if(input == null)
             {
-                return "Invalid Creation of Association";
+                return -1;
             }
-
             var association = ObjectMapper.Map<Association>(input);
             association.Discoverable = false;
             association.SortingOrder = association.Id;
             association.TimeZone = DateTime.UtcNow.ToString();
             association.LaunchDate = association.CreationTime;
-            await _associationRepository.InsertOneAsync(association);
+            await _associationRepository.InsertAndGetIdAsync(association);
             return association.Id;
-
         }
 
-        public async Task<string> DeleteAssociation(string id)
+        public async Task<int> DeleteAssociation(EntityDto input)
         {
-            if(id == null)
+            if(input == null)
             {
-                return "Deletion Failed";
+                return -1;
             }
-            await _associationRepository.DeleteOneAsync(c => c.Id == id);
-            return "Deletion Succesfull";
+            await _associationRepository.DeleteAsync(input.Id);
+            return 1;
         }
 
-        public async Task<AssociationDto> GetAssociation(string id)
+        public async Task<AssociationDto> GetAssociation(int id)
         {
-            if(id == null)
+            var association = await _associationRepository.FirstOrDefaultAsync(c => c.Id == id);
+            if(association == null)
             {
                 return null;
             }
-            var association = await _associationRepository.FindAsync(c => c.Id == id);
             var associationToReturn = ObjectMapper.Map<AssociationDto>(association);
             return associationToReturn;
         }
 
         public async Task<List<AssociationDto>> GetAssociations()
         {
-            var associations = await _associationRepository.Find(c => true).ToListAsync();
-            var associationsToReturn = new List<AssociationDto>();
-            foreach(Association association in associations)
-            {
-                associationsToReturn.Add(ObjectMapper.Map<AssociationDto>(association));
-            }
-            if(associationsToReturn == null)
+            var associations = await _associationRepository.GetAllListAsync();
+            if (associations == null)
             {
                 return null;
             }
+            foreach(Association association in associations)
+            {
+                if(association.Name == null)
+                {
+                    associations.Remove(association);
+                }
+            }
+            var associationsToReturn = ObjectMapper.Map<List<AssociationDto>>(associations);
             return associationsToReturn;
         }
 
@@ -81,19 +82,7 @@ namespace TCCAssociation.Associations
             }
 
             var association = ObjectMapper.Map<Association>(input);
-            var associationToUpdate = Builders<Association>.Update.Set("Id", association.Id)
-                .Set("Name", association.Name)
-                .Set("Name_TC", association.Name_TC)
-                .Set("Name_SC", association.Name_SC)
-                .Set("Description", association.Description)
-                .Set("Description_TC", association.Description_TC)
-                .Set("Description_SC", association.Description_SC)
-                .Set("Url", association.Url)
-                .Set("Url_TC", association.Url_TC)
-                .Set("Url_SC", association.Url_SC)
-                .Set("Logo", association.Logo)
-                .Set("TimeZone", association.TimeZone);
-            var associationUpdated = await _associationRepository.FindOneAndUpdateAsync(Builders<Association>.Filter.Eq(c => c.Id, association.Id), associationToUpdate, new FindOneAndUpdateOptions<Association> { ReturnDocument = ReturnDocument.After });
+            var associationUpdated = await _associationRepository.UpdateAsync(association);
             var associationToReturn = ObjectMapper.Map<AssociationDto>(associationUpdated);
             return associationToReturn;
         }
