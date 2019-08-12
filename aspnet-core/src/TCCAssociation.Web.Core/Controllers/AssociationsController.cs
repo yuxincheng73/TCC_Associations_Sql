@@ -22,7 +22,7 @@ namespace TCCAssociation.Controllers
         public async Task<IActionResult> GetAssociations()
         {
             var associations = await _associationsService.GetAssociations();
-            if(associations = null)
+            if(associations == null)
             {
                 return NotFound();
             }

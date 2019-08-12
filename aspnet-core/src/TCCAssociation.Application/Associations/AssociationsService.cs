@@ -81,17 +81,19 @@ namespace TCCAssociation.Associations
             }
 
             var association = ObjectMapper.Map<Association>(input);
-            var associationToUpdate = Builders<Association>.Update.Set(c => c.Id, association.Id)
-                .Set(c => c.Name, association.Name)
-                .Set(c => c.Name_TC, association.Name_TC)
-                .Set(c => c.Name_SC, association.Name_SC)
-                .Set(c => c.Description, association.Description)
-                .Set(c => c.Description_TC, association.Description_TC)
-                .Set(c => c.Description_SC, association.Description_SC)
-                .Set(c => c.Url_SC, association.Url_SC)
-                .Set(c => c.Logo, association.Logo)
-                .Set(c => c.TimeZone, association.TimeZone);
-            var associationUpdated = await _associationRepository.UpdateOneAsync(Builders<Association>.Filter.Eq(c => c.Id, association.Id), associationToUpdate, new FindOneAndUpdateOptions<Association> { ReturnDocument = ReturnDocument.After });
+            var associationToUpdate = Builders<Association>.Update.Set("Id", association.Id)
+                .Set("Name", association.Name)
+                .Set("Name_TC", association.Name_TC)
+                .Set("Name_SC", association.Name_SC)
+                .Set("Description", association.Description)
+                .Set("Description_TC", association.Description_TC)
+                .Set("Description_SC", association.Description_SC)
+                .Set("Url", association.Url)
+                .Set("Url_TC", association.Url_TC)
+                .Set("Url_SC", association.Url_SC)
+                .Set("Logo", association.Logo)
+                .Set("TimeZone", association.TimeZone);
+            var associationUpdated = await _associationRepository.FindOneAndUpdateAsync(Builders<Association>.Filter.Eq(c => c.Id, association.Id), associationToUpdate, new FindOneAndUpdateOptions<Association> { ReturnDocument = ReturnDocument.After });
             var associationToReturn = ObjectMapper.Map<AssociationDto>(associationUpdated);
             return associationToReturn;
         }
